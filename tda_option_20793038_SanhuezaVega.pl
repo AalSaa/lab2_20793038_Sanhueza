@@ -1,3 +1,5 @@
+:- module(tda_option_20793038_SanhuezaVega, [option/6]).
+
 :- use_module(tda_tools_20793038_SanhuezaVega).
 
 % ######################################## CONSTRUCTOR #######################################
