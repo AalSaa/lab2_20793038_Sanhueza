@@ -1,10 +1,12 @@
-:- module(tda_main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3]).
+:- module(tda_main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3, system/4]).
 
 :- use_module(tda_tools_20793038_SanhuezaVega).
 :- use_module(tda_option_20793038_SanhuezaVega).
 :- use_module(tda_flow_20793038_SanhuezaVega).
 :- use_module(tda_flow_20793038_SanhuezaVega).
 :- use_module(tda_chatbot_20793038_SanhuezaVega).
+:- use_module(tda_date_20793038_SanhuezaVega).
+:- use_module(tda_system_20793038_SanhuezaVega).
 
 % ######################################## CONSTRUCTOR #######################################
 
@@ -37,6 +39,16 @@ chatbot(ID, Name, WelcomeMessage, StartFlowID, Flows, Chatbot):-
     downcase_atom(WelcomeMessage, MinWelcomeMessage),
     addElementsInList(Flows, [], FlowList),
     setChatbot(ID, MinName, MinWelcomeMessage, StartFlowID, FlowList, Chatbot).
+
+% Descripcion: Crea un sistema.
+% Dom: Name (string) X StartChatbotID (int) X Chatbots (list) X System (var)
+% M. Primaria: system/4
+% M. Secundaria: downcase_atom/2, addElementsInList/3, setSystem/7
+system(Name, StartChatbotID, Chatbots, System):-
+    getDate(Date),
+    downcase_atom(Name, MinName),
+    addElementsInList(Chatbots, [], ChatbotList),
+    setSystem(Date, MinName, [], [], StartChatbotID, ChatbotList, System).
 
 % ######################################## MODIFICADOR #######################################
 
