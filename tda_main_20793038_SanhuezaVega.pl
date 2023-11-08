@@ -81,3 +81,20 @@ chatbotAddFlow(Chatbot, Flow, NewChatbot):-
     addElementsInList([Flow], CurrentFlowList, NewFlowList),
 
     setChatbot(ID, Name, WelcomeMessage, StartFlowID, NewFlowList, NewChatbot).
+
+% Descripcion: Agrega un chatbot en el sistema.
+% Dom: System (list) X Chatbot (list) X NewSystem (var)
+% M. Primaria: systemAddChatbot/3
+% M. Secundaria: getSystemDate/2, getSystemName/2, getSystemUserList/2, getSystemChatHistory/2,
+%                getSystemStartCBID/2, getSystemChatbotList/2, addElementsInList/3, setSystem/7
+systemAddChatbot(System, Chatbot, NewSystem):-
+    getSystemDate(System, Date),
+    getSystemName(System, Name),
+    getSystemUserList(System, UserList),
+    getSystemChatHistory(System, ChatHistory),
+    getSystemStartCBID(System, StartCBID),
+    getSystemChatbotList(System, CurrentChatbotList),
+
+    addElementsInList([Chatbot], CurrentChatbotList, NewChatbotList),
+
+    setSystem(Date, Name, UserList, ChatHistory, StartCBID, NewChatbotList, NewSystem).
