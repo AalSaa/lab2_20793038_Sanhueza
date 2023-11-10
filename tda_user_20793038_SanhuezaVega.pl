@@ -1,4 +1,4 @@
-:- module(tda_user_20793038_SanhuezaVega, [setUser/5, someoneLoggedIn/1, login/4, getUsername/2, getUserCBCodelink/2, getUserFCodelink/2]).
+:- module(tda_user_20793038_SanhuezaVega, [setUser/5, someoneLoggedIn/1, login/4, logout/3, getUsername/2, getUserCBCodelink/2, getUserFCodelink/2]).
 
 :- use_module(tda_tools_20793038_SanhuezaVega).
 
@@ -59,3 +59,14 @@ login(Username, [First | Rest], UpdatedUserListA, FinalUserList):-
 login(Username, [First | Rest], UpdatedUserListA, FinalUserList):-
     append(UpdatedUserListA, [First], UpdatedUserListB),
     login(Username, Rest, UpdatedUserListB, FinalUserList).
+
+% Descripcion: Desloguea a un usuario en una lista de usuarios.
+% Dom: Userlist (list) X UpdatedUserList (list) X FinalUserlist (var)
+logout([], UpdatedUserList, FinalUserList):-
+    FinalUserList = UpdatedUserList, !.
+
+logout([First | Rest], UpdatedUserListA, FinalUserList):-
+    getUsername(First, SelectedUsername),
+    setUser(SelectedUsername, 0, -1, -1, UpdatedUser),
+    append(UpdatedUserListA, [UpdatedUser], UpdatedUserListB),
+    logout(Rest, UpdatedUserListB, FinalUserList).

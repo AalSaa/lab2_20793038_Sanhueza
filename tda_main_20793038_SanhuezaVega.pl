@@ -1,4 +1,4 @@
-:- module(tda_main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3, system/4, systemAddChatbot/3, systemAddUser/3, systemLogin/3]).
+:- module(tda_main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3, system/4, systemAddChatbot/3, systemAddUser/3, systemLogin/3, systemLogout/2]).
 
 :- use_module(tda_tools_20793038_SanhuezaVega).
 :- use_module(tda_option_20793038_SanhuezaVega).
@@ -117,6 +117,22 @@ systemLogin(System, Username, NewSystem):-
     getSystemChatbotList(System, ChatbotList),
 
     login(MinUsername, CurrentUserList, [], NewUserList),
+
+    setSystem(Date, Name, NewUserList, ChatHistory, StartCBID, ChatbotList, NewSystem).
+
+% Descripcion: Desloguea a un usuario en el sistema.
+% Dom: System (list) X NewSystem (var)
+systemLogout(System, NewSystem):-
+    getSystemUserList(System, CurrentUserList),
+    someoneLoggedIn(CurrentUserList),
+
+    getSystemDate(System, Date),
+    getSystemName(System, Name),
+    getSystemChatHistory(System, ChatHistory),
+    getSystemStartCBID(System, StartCBID),
+    getSystemChatbotList(System, ChatbotList),
+
+    logout(CurrentUserList, [] ,NewUserList),
 
     setSystem(Date, Name, NewUserList, ChatHistory, StartCBID, ChatbotList, NewSystem).
 
