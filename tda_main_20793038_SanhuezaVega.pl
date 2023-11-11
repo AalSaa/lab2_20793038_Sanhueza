@@ -1,4 +1,4 @@
-:- module(tda_main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3, system/4, systemAddChatbot/3, systemAddUser/3, systemLogin/3, systemLogout/2]).
+:- module(tda_main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3, system/4, systemAddChatbot/3, systemAddUser/3, systemLogin/3, systemLogout/2, systemTalkRec/3]).
 
 :- use_module(tda_tools_20793038_SanhuezaVega).
 :- use_module(tda_option_20793038_SanhuezaVega).
@@ -135,4 +135,28 @@ systemLogout(System, NewSystem):-
     logout(CurrentUserList, [] ,NewUserList),
 
     setSystem(Date, Name, NewUserList, ChatHistory, StartCBID, ChatbotList, NewSystem).
+
+% Descripcion: Interactua con un chatbot del sistema.
+% Dom: System (list) X Message (string) X NewSystem (var)
+systemTalkRec(System, Message, NewSystem):-
+    getSystemUserList(System, CurrentUserList),
+    someoneLoggedIn(CurrentUserList),
+
+    getCurrentOptionList(System, CurrentOptionList),
+    getOptionByMessage(Message, CurrentOptionList, SelectedOption),
+    getOptionCBCodelink(SelectedOption, OptionCBCodelink),
+    getOptionFCodelink(SelectedOption, OptionFCodelink),
+    updateLoggedUser(OptionCBCodelink, OptionFCodelink, CurrentUserList, [], NewUserList),
+
+    getSystemChatHistory(System, CurrentChatHistory),
+    setStrRecord(System, Message, NewRecord),
+    getUserLogged(CurrentUserList, UserLogged),
+    getUsername(UserLogged, Username),
+    addRecordInChatHistoryList(CurrentChatHistory, Username, NewRecord, [], NewChatHistory),
+
+    getSystemDate(System, SystemDate),
+    getSystemName(System, SystemName),
+    getSystemStartCBID(System, SystemStartCBID),
+    getSystemChatbotList(System, SystemChatbotList),
+    setSystem(SystemDate, SystemName, NewUserList, NewChatHistory, SystemStartCBID, SystemChatbotList, NewSystem).
 

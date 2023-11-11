@@ -1,4 +1,10 @@
-:- module(tda_system, [setSystem/7, getSystemDate/2, getSystemName/2, getSystemUserList/2, getSystemChatHistory/2, getSystemStartCBID/2, getSystemChatbotList/2]).
+:- module(tda_system_20793038_SanhuezaVega, [setSystem/7, getSystemDate/2, getSystemName/2, getSystemUserList/2, getSystemChatHistory/2, getSystemStartCBID/2, getSystemChatbotList/2, getCurrentOptionList/2, getCurrentCBAndFCodelink/3]).
+
+:- use_module(tda_tools_20793038_SanhuezaVega).
+:- use_module(tda_option_20793038_SanhuezaVega).
+:- use_module(tda_flow_20793038_SanhuezaVega).
+:- use_module(tda_chatbot_20793038_SanhuezaVega).
+:- use_module(tda_user_20793038_SanhuezaVega).
 
 % ######################################## CONSTRUCTOR #######################################
 
@@ -39,3 +45,43 @@ getSystemStartCBID(System, SystemStartCBID):-
 % Dom: System (list) X SystemChatbotList (var)
 getSystemChatbotList(System, SystemChatbotList):-
     setSystem(_, _, _, _, _, SystemChatbotList, System).
+
+% Descripcion: Obtiene los codelinks actuales del sistema.
+% Dom: System (list) X CurrentCBCodelink (var) X CurrentFCodelink (var)
+getCurrentCBAndFCodelink(System, CurrentCBCodelink, CurrentFCodelink):-
+    getSystemUserList(System, UserList),
+    getUserLogged(UserList, UserLogged),
+    getUserCBCodelink(UserLogged, UserCBCodelink),
+    getUserFCodelink(UserLogged, UserFCodelink),
+    \+ UserCBCodelink == -1,
+    \+ UserFCodelink == -1,
+    CurrentCBCodelink = UserCBCodelink,
+    CurrentFCodelink = UserFCodelink, !.
+
+getCurrentCBAndFCodelink(System, CurrentCBCodelink, CurrentFCodelink):-
+    getInitialCBAndFCodelink(System, InitialCBCodelink, InitialFCodelink),
+    CurrentCBCodelink = InitialCBCodelink,
+    CurrentFCodelink = InitialFCodelink.
+
+% Descripcion: Obtiene los codelinks iniciales del sistema.
+% Dom: System (list) X InitialCBCodelink (var) X InitialFCodelink (var)
+getInitialCBAndFCodelink(System, InitialCBCodelink, InitialFCodelink):-
+    getSystemStartCBID(System, StartCBID),
+    getSystemChatbotList(System, SystemChatbotList),
+    getElementByID(StartCBID, SystemChatbotList, SelectedChatbot),
+    getChatbotStartFlowID(SelectedChatbot, StartFlowID),
+    getChatbotFlowList(SelectedChatbot, ChatbotFlowList),
+    getElementByID(StartFlowID, ChatbotFlowList, _),
+    InitialCBCodelink = StartCBID,
+    InitialFCodelink = StartFlowID.
+
+% Descripcion: Obtiene la lista de opciones actual.
+% Dom: System (list) X CurrentOptionList (var)
+getCurrentOptionList(System, CurrentOptionList):-
+    getCurrentCBAndFCodelink(System, CurrentCBCodelink, CurrentFCodelink),
+    getSystemChatbotList(System, SystemChatbotList),
+    getElementByID(CurrentCBCodelink, SystemChatbotList, CurrentChatbot),
+    getChatbotFlowList(CurrentChatbot, ChatbotFlowList),
+    getElementByID(CurrentFCodelink, ChatbotFlowList, CurrentFlow),
+    getFlowOptionList(CurrentFlow, FlowOptionList),
+    CurrentOptionList = FlowOptionList.

@@ -3,9 +3,6 @@
 % ######################################## PERTENENCIA #######################################
 % Descripcion: Verifica si existe un elemento con la id indicada en una lista de elementos.
 % Dom: ID (int) X ElementList (list)
-idExists(_, []):-
-    fail, !.
-
 idExists(ID, [First | _]):-
     getID(First, IDE),
     ID == IDE, !.
@@ -21,9 +18,6 @@ getID([ID | _], ID).
 
 % Descripcion: Obtiene un elemento segun su id.
 % Dom: ID (int) X ElementList (list) X SelectedElement(var)
-getElementByID(_, [], _):-
-    fail, !.
-
 getElementByID(ID, [First | _], SelectedElement):-
     getID(First, IDE),
     ID == IDE,
@@ -54,6 +48,3 @@ addElementsInList([First | Rest], ElementList, FinalElementList):-
     \+ idExists(ID, ElementList),
     append(ElementList, [First], NewElementList),
     addElementsInList(Rest, NewElementList, FinalElementList), !.
-
-addElementsInList(_, _, _):-
-    fail, !.

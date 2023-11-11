@@ -1,4 +1,4 @@
-:- module(tda_user_20793038_SanhuezaVega, [setUser/5, someoneLoggedIn/1, login/4, logout/3, getUsername/2, getUserCBCodelink/2, getUserFCodelink/2]).
+:- module(tda_user_20793038_SanhuezaVega, [setUser/5, someoneLoggedIn/1, login/4, logout/3, updateLoggedUser/5, getUserLogged/2, getUsername/2, getUserCBCodelink/2, getUserFCodelink/2]).
 
 :- use_module(tda_tools_20793038_SanhuezaVega).
 
@@ -42,6 +42,16 @@ getUserCBCodelink(User, UserCBCodelink):-
 getUserFCodelink(User, UserFCodelink):-
     setUser(_, _, _, UserFCodelink, User).
 
+% Descripcion: Obtiene el usuario logueado en una lista de usuarios.
+% Dom: Userlist (list) X UserLogged (var)
+getUserLogged([First | _], UserLogged):-
+    getUserStatus(First, UserStatus),
+    UserStatus == 1,
+    UserLogged = First, !.
+
+getUserLogged([_ | Rest], UserLogged):-
+    getUserLogged(Rest, UserLogged).
+
 % ######################################## MODIFICADOR #######################################
 
 % Descripcion: Loguea a un usuario en una lista de usuarios.
@@ -70,3 +80,21 @@ logout([First | Rest], UpdatedUserListA, FinalUserList):-
     setUser(SelectedUsername, 0, -1, -1, UpdatedUser),
     append(UpdatedUserListA, [UpdatedUser], UpdatedUserListB),
     logout(Rest, UpdatedUserListB, FinalUserList).
+
+% Descripcion: Actualiza el cb y f codelink del usuario logueado.
+% Dom: NCBCodelink (int) X NFColdelink (int) X Userlist (list) X
+%      UpdatedUserList (list) X NewUserList (var)
+updateLoggedUser(_, _, [], UpdatedUserList, FinalUserList):-
+    FinalUserList = UpdatedUserList, !.
+
+updateLoggedUser(NCBCodelink, NFColdelink, [First | Rest], UpdatedUserListA, FinalUserList):-
+    getUserStatus(First, UserStatus),
+    UserStatus == 1,
+    getUsername(First, Username),
+    setUser(Username, 1, NCBCodelink, NFColdelink, UpdatedUser),
+    append(UpdatedUserListA, [UpdatedUser], UpdatedUserListB),
+    updateLoggedUser(NCBCodelink, NFColdelink, Rest, UpdatedUserListB, FinalUserList), !.
+
+updateLoggedUser(NCBCodelink, NFColdelink, [First | Rest], UpdatedUserListA, FinalUserList):-
+    append(UpdatedUserListA, [First], UpdatedUserListB),
+    updateLoggedUser(NCBCodelink, NFColdelink, Rest, UpdatedUserListB, FinalUserList).
