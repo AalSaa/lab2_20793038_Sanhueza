@@ -2,43 +2,65 @@
 
 :- use_module(tda_tools_20793038_SanhuezaVega).
 
+% ######################################## TDA OPTION ########################################
+
+% ######################################## REPRESENTACION ####################################
+
+% Este TDA corresponde a una opcion.
+% Dentro se guardara un id de la opcion, un mensaje, un id de chatbot, un id de flujo 
+% y una lista de palabras que caracterizan a la opcion.
+
 % ######################################## CONSTRUCTOR #######################################
 
 % Descripcion: Construye una opcion.
 % Dom: ID (int) X Message (string) X ChatbotCodeLink (int) X FlowCodeLink (int) X 
-%      Keyword (list) X Option (var)
+%      Keyword (list)
+% Rec: Option (list)
+% Metodo: -
 setOption(ID, Message, ChatbotCodeLink, FlowCodeLink, Keyword, Option):-
     Option = [ID, Message, ChatbotCodeLink, FlowCodeLink, Keyword].
 
 % ######################################## SELECTOR ##########################################
 
 % Descripcion: Obtiene el ID de una opcion.
-% Dom: Option (list) X OptionID (var)
+% Dom: Option (list)
+% Rec: OptionID (int)
+% Metodo: -
 getOptionID(Option, OptionID):-
     setOption(OptionID, _, _, _, _, Option).
 
 % Descripcion: Obtiene el mensaje de una opcion.
-% Dom: Option (list) X OptionMessage (var)
+% Dom: Option (list)
+% Rec: OptionMessage (string)
+% Metodo: -
 getOptionMessage(Option, OptionMessage):-
     setOption(_, OptionMessage, _, _, _, Option).
 
 % Descripcion: Obtiene el Chatbot codelink de una opcion.
-% Dom: Option (list) X OptionCBCodelink (var)
+% Dom: Option (list)
+% Rec: OptionCBCodelink (int)
+% Metodo: -
 getOptionCBCodelink(Option, OptionCBCodelink):-
     setOption(_, _, OptionCBCodelink, _, _, Option).
 
 % Descripcion: Obtiene el Flow codelink de una opcion.
-% Dom: Option (list) X OptionFCodelink (var)
+% Dom: Option (list)
+% Rec: OptionFCodelink (int)
+% Metodo: -
 getOptionFCodelink(Option, OptionFCodelink):-
     setOption(_, _, _, OptionFCodelink, _, Option).
 
 % Descripcion: Obtiene la lista de palabras claves de una opcion.
-% Dom: Option (list) X OptionKeyword (var)
+% Dom: Option (list)
+% Rec: OptionKeyword (list)
+% Metodo: -
 getOptionKeyword(Option, OptionKeyword):-
     setOption(_, _, _, _, OptionKeyword, Option).
 
 % Descripcion: Obtiene una opcion segun su mensaje o id.
-% Dom: Message (string) X OptionList (list) X SelectedOption (var) 
+% Dom: Message (string) X OptionList (list)
+% Rec: SelectedOption (list)
+% Metodo: Recursion
 getOptionByMessage(Message, [First | _], SelectedOption):-
     getOptionID(First, OptionID),
     number_string(OptionID, SOptionID),

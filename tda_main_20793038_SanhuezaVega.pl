@@ -1,4 +1,4 @@
-:- module(tda_main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3, system/4, systemAddChatbot/3, systemAddUser/3, systemLogin/3, systemLogout/2, systemTalkRec/3]).
+:- module(tda_main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3, system/4, systemAddChatbot/3, systemAddUser/3, systemLogin/3, systemLogout/2, systemTalkRec/3, systemSynthesis/3]).
 
 :- use_module(tda_tools_20793038_SanhuezaVega).
 :- use_module(tda_option_20793038_SanhuezaVega).
@@ -10,18 +10,26 @@
 :- use_module(tda_chathistory_20793038_SanhuezaVega).
 :- use_module(tda_system_20793038_SanhuezaVega).
 
+% ######################################## MAIN ##############################################
+
+% Aqui se encuentran todos los predicados principales para el proyecto.
+
 % ######################################## CONSTRUCTOR #######################################
 
 % Descripcion: Crea una opcion.
 % Dom: ID (int) X Message (string) X ChatbotCodeLink (string) X
-%      FlowCodeLink (string) X Keyword (list) X Option (var)
+%      FlowCodeLink (string) X Keyword (list)
+% Rec: Option (list)
+% Metodo: -
 option(ID, Message, ChatbotCodeLink, FlowCodeLink, Keyword, Option):-
     downcase_atom(Message, MinMessage),
     stringDownInList(Keyword, [], MinKeyword),
     setOption(ID, MinMessage, ChatbotCodeLink, FlowCodeLink, MinKeyword, Option).
 
 % Descripcion: Crea un flujo.
-% Dom: ID (int) X NameMSG (string) X Options (list) X Flow (var)
+% Dom: ID (int) X NameMSG (string) X Options (list)
+% Rec: Flow (list)
+% Metodo: -
 flow(ID, NameMSG, Options, Flow):-
     downcase_atom(NameMSG, MinNameMSG),
     addElementsInList(Options, [], OptionList),
@@ -29,7 +37,9 @@ flow(ID, NameMSG, Options, Flow):-
 
 % Descripcion: Crea un chatbot.
 % Dom: ID (int) X Name (string) X WelcomeMessage (string) X
-%      StartFlowID (int) X Flows (list) X Chatbot (var)
+%      StartFlowID (int) X Flows (list)
+% Rec: Chatbot (list)
+% Metodo: -
 chatbot(ID, Name, WelcomeMessage, StartFlowID, Flows, Chatbot):-
     downcase_atom(Name, MinName),
     downcase_atom(WelcomeMessage, MinWelcomeMessage),
@@ -37,17 +47,34 @@ chatbot(ID, Name, WelcomeMessage, StartFlowID, Flows, Chatbot):-
     setChatbot(ID, MinName, MinWelcomeMessage, StartFlowID, FlowList, Chatbot).
 
 % Descripcion: Crea un sistema.
-% Dom: Name (string) X StartChatbotID (int) X Chatbots (list) X System (var)
+% Dom: Name (string) X StartChatbotID (int) X Chatbots (list)
+% Rec: System (list)
+% Metodo: -
 system(Name, StartChatbotID, Chatbots, System):-
     getDate(Date),
     downcase_atom(Name, MinName),
     addElementsInList(Chatbots, [], ChatbotList),
     setSystem(Date, MinName, [], [], StartChatbotID, ChatbotList, System).
 
+% Descripcion: Crea un string que contiene todos los registros de un usuario.
+% Dom: System (string) X Username (string)
+% Rec: String (string)
+% Metodo: -
+systemSynthesis(System, Username, String):-
+    getSystemUserList(System, UserList),
+    downcase_atom(Username, MinUsername),
+    idExists(MinUsername, UserList),
+    getSystemChatHistory(System, ChatHistory),
+    getElementByID(MinUsername, ChatHistory, CHOU),
+    getCHOURecordList(CHOU, CHOURecordList),
+    setSrtForAllRecords(CHOURecordList, '', String).
+
 % ######################################## MODIFICADOR #######################################
 
 % Descripcion: Agrega una opcion a la lista de opciones del flujo.
-% Dom: Flow (list) X Option (list) X NewFlow (var)
+% Dom: Flow (list) X Option (list)
+% Rec: NewFlow (list)
+% Metodo: -
 flowAddOption(Flow, Option, NewFlow):-
     getFlowID(Flow, ID),
     getFlowNameMSG(Flow, NameMSG),
@@ -58,7 +85,9 @@ flowAddOption(Flow, Option, NewFlow):-
     setFlow(ID, NameMSG, NewOptionList, NewFlow).
 
 % Descripcion: Agrega un flujo a la lista de flujos de un chatbot.
-% Dom: Chatbot (list) X Flow (list) X NewChatbot (var)
+% Dom: Chatbot (list) X Flow (list)
+% Rec: NewChatbot (list)
+% Metodo: -
 chatbotAddFlow(Chatbot, Flow, NewChatbot):-
     getChatbotID(Chatbot, ID),
     getChatbotName(Chatbot, Name),
@@ -71,7 +100,9 @@ chatbotAddFlow(Chatbot, Flow, NewChatbot):-
     setChatbot(ID, Name, WelcomeMessage, StartFlowID, NewFlowList, NewChatbot).
 
 % Descripcion: Agrega un chatbot en el sistema.
-% Dom: System (list) X Chatbot (list) X NewSystem (var)
+% Dom: System (list) X Chatbot (list)
+% Rec: NewSystem (list)
+% Metodo: -
 systemAddChatbot(System, Chatbot, NewSystem):-
     getSystemDate(System, Date),
     getSystemName(System, Name),
@@ -85,7 +116,9 @@ systemAddChatbot(System, Chatbot, NewSystem):-
     setSystem(Date, Name, UserList, ChatHistory, StartCBID, NewChatbotList, NewSystem).
 
 % Descripcion: Agrega un usuario al sistema.
-% Dom: System (list) X Username (string) X NewSystem (var)
+% Dom: System (list) X Username (string)
+% Rec: NewSystem (list)
+% Metodo: -
 systemAddUser(System, Username, NewSystem):-
     downcase_atom(Username, MinUsername),
     getSystemDate(System, Date),
@@ -104,7 +137,9 @@ systemAddUser(System, Username, NewSystem):-
     setSystem(Date, Name, NewUserList, NewChatHistory, StartCBID, ChatbotList, NewSystem).
 
 % Descripcion: Loguea a un usuario en el sistema.
-% Dom: System (list) X Username (string) X NewSystem (var)
+% Dom: System (list) X Username (string)
+% Rec: NewSystem (list)
+% Metodo: -
 systemLogin(System, Username, NewSystem):-
     getSystemUserList(System, CurrentUserList),
     \+someoneLoggedIn(CurrentUserList),
@@ -121,7 +156,9 @@ systemLogin(System, Username, NewSystem):-
     setSystem(Date, Name, NewUserList, ChatHistory, StartCBID, ChatbotList, NewSystem).
 
 % Descripcion: Desloguea a un usuario en el sistema.
-% Dom: System (list) X NewSystem (var)
+% Dom: System (list)
+% Rec: NewSystem (list)
+% Metodo: -
 systemLogout(System, NewSystem):-
     getSystemUserList(System, CurrentUserList),
     someoneLoggedIn(CurrentUserList),
@@ -137,26 +174,11 @@ systemLogout(System, NewSystem):-
     setSystem(Date, Name, NewUserList, ChatHistory, StartCBID, ChatbotList, NewSystem).
 
 % Descripcion: Interactua con un chatbot del sistema.
-% Dom: System (list) X Message (string) X NewSystem (var)
+% Dom: System (list) X Message (string)
+% Rec: NewSystem (list)
+% Metodo: -
 systemTalkRec(System, Message, NewSystem):-
     getSystemUserList(System, CurrentUserList),
     someoneLoggedIn(CurrentUserList),
-
     getCurrentOptionList(System, CurrentOptionList),
-    getOptionByMessage(Message, CurrentOptionList, SelectedOption),
-    getOptionCBCodelink(SelectedOption, OptionCBCodelink),
-    getOptionFCodelink(SelectedOption, OptionFCodelink),
-    updateLoggedUser(OptionCBCodelink, OptionFCodelink, CurrentUserList, [], NewUserList),
-
-    getSystemChatHistory(System, CurrentChatHistory),
-    setStrRecord(System, Message, NewRecord),
-    getUserLogged(CurrentUserList, UserLogged),
-    getUsername(UserLogged, Username),
-    addRecordInChatHistoryList(CurrentChatHistory, Username, NewRecord, [], NewChatHistory),
-
-    getSystemDate(System, SystemDate),
-    getSystemName(System, SystemName),
-    getSystemStartCBID(System, SystemStartCBID),
-    getSystemChatbotList(System, SystemChatbotList),
-    setSystem(SystemDate, SystemName, NewUserList, NewChatHistory, SystemStartCBID, SystemChatbotList, NewSystem).
-
+    setSystemByTalk(System, Message, CurrentOptionList, NewSystem).
