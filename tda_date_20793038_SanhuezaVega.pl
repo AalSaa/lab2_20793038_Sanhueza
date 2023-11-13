@@ -5,9 +5,9 @@
 % ######################################## REPRESENTACION ####################################
 
 % Este TDA corresponde a una fecha.
-% dentro de ella se incluye la fecha en formato UNIX.
+% dentro de ella se incluye la fecha en formato Unix.
 
-% Descripcion: Obtiene la fecha actual en UNIX.
+% Descripcion: Obtiene la fecha actual en Unix.
 % Dom: -
 % Rec: Date (string)
 % Metodo: -

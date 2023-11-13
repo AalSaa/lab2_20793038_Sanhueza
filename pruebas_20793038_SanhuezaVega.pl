@@ -1,4 +1,4 @@
-:- use_module(tda_main_20793038_SanhuezaVega).
+:- use_module(main_20793038_SanhuezaVega).
 
 % Script de prueba Enunciado 1
 /*

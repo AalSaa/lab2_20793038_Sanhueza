@@ -1,4 +1,4 @@
-:- module(tda_main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3, system/4, systemAddChatbot/3, systemAddUser/3, systemLogin/3, systemLogout/2, systemTalkRec/3, systemSynthesis/3]).
+:- module(main_20793038_SanhuezaVega, [option/6, flow/4, flowAddOption/3, chatbot/6, chatbotAddFlow/3, system/4, systemAddChatbot/3, systemAddUser/3, systemLogin/3, systemLogout/2, systemTalkRec/3, systemSynthesis/3]).
 
 :- use_module(tda_tools_20793038_SanhuezaVega).
 :- use_module(tda_option_20793038_SanhuezaVega).
